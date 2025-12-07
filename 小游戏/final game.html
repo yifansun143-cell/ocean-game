@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>海上日常 — 女海员小游戏</title>
+  <style>
+    :root{--ocean:#0b4f6c;--sky:#a6e3ff;--card-bg:rgba(255,255,255,0.95);--accent:#ff7aa2}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,var(--sky) 0%, #bfefff 30%, #cad5db 100%)}
+    .app{min-height:100vh;display:flex;flex-direction:column;align-items:stretch}
+    header{padding:18px 24px;display:flex;align-items:center;gap:14px}
+    header h1{margin:0;font-size:18px}
+    .container{max-width:1100px;margin:0 auto;padding:12px;width:100%}
+    /* Parallax (single image hero section) */
+.parallax {
+  position: relative;
+  height: 360px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(2,20,34,0.12);
+
+  /* 使用一张大背景图（可自行更换 URL） */
+  background-image: <img src="1.jpeg">
+  background-size: cover;
+  background-position: center;
+}
+
+/* 覆盖标题 */
+.hero-title {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  letter-spacing: 1px;
+}
+<section class="parallax" id="parallax">
+  <div class="hero-title">海上日常 — 女海员的航行</div>
+</section>
+    /* character overlay */
+    .character{position:absolute;right:12%;bottom:8%;width:220px;max-width:38%;z-index:10}
+    .character img{width:100%;filter:contrast(1.02)}
+    /* UI cards */
+    .modules{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+    .card{background:var(--card-bg);padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(2,20,34,0.06);min-height:180px}
+    .card h2{margin:0 0 8px 0;font-size:16px}
+    .meter{height:14px;background:#e6f0f4;border-radius:99px;overflow:hidden}
+    .meter > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ffbf69);width:50%}
+    .scenario-area{display:flex;flex-direction:column;gap:8px}
+    .choices{display:flex;gap:8px;flex-wrap:wrap}
+    button.btn{padding:8px 12px;border-radius:8px;border:0;background:var(--ocean);color:white;cursor:pointer}
+    button.ghost{background:transparent;color:var(--ocean);border:1px solid rgba(11,79,108,0.12)}
+    .memory-list{display:flex;gap:8px;flex-wrap:wrap}
+    .memory{width:120px;height:80px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.7));display:flex;align-items:center;justify-content:center;cursor:pointer;padding:6px;box-shadow:0 4px 10px rgba(2,20,34,0.06)}
+    .memory img{max-width:100%;max-height:100%;object-fit:cover;border-radius:6px}
+    /* Guestbook */
+    .guestbook-entries{max-height:200px;overflow:auto;padding:6px;border-radius:8px;border:1px dashed rgba(11,79,108,0.06)}
+    .entry{padding:8px;border-bottom:1px solid rgba(11,79,108,0.04)}
+    footer{padding:18px;text-align:center;color:#054a5b}
+    /* quiz */
+    .quiz-area{display:flex;flex-direction:column;gap:8px}
+    .quiz-controls{display:flex;gap:8px;align-items:center}
+    .result{font-weight:600;color:#033e4a}
+    /* responsive */
+    @media (max-width:900px){.modules{grid-template-columns:1fr}.character{width:180px;right:6%}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="container">
+      <img src="https://i.imgur.com/0y8Ftya.png" alt="logo" style="width:46px;height:46px">
+      <div>
+        <h1>海上日常 — 女海员的航行</h1>
+        <div style="font-size:12px;color:#064a5b;opacity:0.8">主题：性别歧视遭遇 · 对家人的思念 · 互动留言板（可选）</div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="parallax" id="parallax">
+        <div class="layer sky" data-speed="0.1"></div>
+        <div class="layer clouds" data-speed="0.2"></div>
+        <div class="layer ocean1" data-speed="0.6"></div>
+        <div class="layer ocean2" data-speed="0.9"></div>
+        <div class="character">
+          <!-- 女性水手卡通图片 -->
+          <img src="https://i.imgur.com/0y8Ftya.png" alt="女海员">
+        </div>
+      </section>
+
+      <div class="modules">
+        <!-- 模块一：遭遇与选择 -->
+        <section class="card" id="scenarioCard">
+          <h2>日常遭遇 — 做出你的回应</h2>
+          <div class="scenario-area">
+            <div id="scenarioText">早晨值班时，甲板长对你说："这项活比较适合男生，你去做别的吧。"</div>
+            <div class="choices" id="choices"></div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+              <div style="flex:1">
+                <div style="font-size:12px;color:#03606e;margin-bottom:6px">心理坚韧值</div>
+                <div class="meter"><i id="resilienceBar"></i></div>
+              </div>
+              <div><button class="btn" id="nextScenarioBtn">下一遭遇</button></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 模块二：对家人的思念 -->
+        <section class="card" id="memoryCard">
+          <h2>对家人的思念 — 收集记忆</h2>
+          <p style="margin:0 0 8px 0">收集海上的小记忆（点击卡片），可以拼成一封信给家人，写下你想对他们说的话。</p>
+          <div class="memory-list" id="memories">
+            <!-- memory cards dynamically created -->
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <button class="btn" id="composeLetter">写信给家人</button>
+            <button class="ghost" id="autoLetter">自动生成一句慰藉语</button>
+          </div>
+          <div id="letterPreview" style="margin-top:8px;font-size:14px;color:#01313a"></div>
+        </section>
+
+        <!-- 模块三：互动留言板（用户自主选择是否留言） -->
+        <section class="card" id="guestbookCard">
+          <h2>互动留言板（自愿）</h2>
+          <p style="margin:0 0 8px 0">你可以选择是否留言。留言会保存在本地（仅供体验）。</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <label><input type="checkbox" id="enableLeave" /> 我选择留言</label>
+            <button class="btn" id="openGuestbook" disabled>打开留言框</button>
+          </div>
+          <div class="guestbook-entries" id="entries"></div>
+        </section>
+
+        <!-- 模块四：问卷/打分（所有题目分值相等，总分100） -->
+        <section class="card" id="quizCard">
+          <h2>互动问卷（不可重复）</h2>
+          <div class="quiz-area" id="quizArea">
+            <div id="quizQuestion">点击开始答题。</div>
+            <div class="quiz-controls" id="quizControls">
+              <button class="btn" id="btnYes" disabled>是</button>
+              <button class="btn" id="btnNo" disabled>否</button>
+              <button class="ghost" id="quizBtn">开始答题</button>
+            </div>
+            <div id="quizProgress" style="font-size:12px;color:#04556b;margin-top:6px"></div>
+            <div id="quizResult" class="result" style="margin-top:8px"></div>
+          </div>
+        </section>
+
+
+    </main>
+
+    <footer>
+      Tip：本小游戏仅为交互体验，旨在呈现女海员在航行中面对的情绪与抉择。
+    </footer>
+  </div>
+
+  <!-- 模态与脚本 -->
+  <div id="modal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:999">
+    <div style="background:rgba(2,20,34,0.45);position:absolute;inset:0"></div>
+    <div style="position:relative;background:#fff9e6;border-radius:12px;padding:16px;max-width:760px;width:92%;z-index:1;box-shadow:0 20px 60px rgba(2,20,34,0.3)">
+      <div id="modalContent"></div>
+      <div style="margin-top:12px;text-align:right"><button class="ghost" onclick="closeModal()">关闭</button></div>
+    </div>
+  </div>
+
+  <!-- 重置旅程按钮（刷新页面） -->
+  <button id="resetBtn" style="position:fixed;bottom:20px;right:20px;padding:10px 20px;border:none;border-radius:12px;background:#ffffffaa;backdrop-filter:blur(6px);cursor:pointer;font-size:16px;">重置旅程</button>
+
+  <script>
+    // ------------------ Data ------------------
+    const scenarios = [
+      {
+        text: '早晨值班时，甲板长对你说："这项活比较适合男生，你去做别的吧。"',
+        choices: [
+          {label:'保持沉默并继续自己的任务 (稳妥)', delta: 2},
+          {label:'礼貌但坚定地说明自己可以做 (直接)', delta: 6},
+          {label:'喊来上级投诉（冲突）', delta: -4}
+        ]
+      },
+      {
+        text: '同事在交接时无意把重活推给你并说“你比较灵活”，口气带玩笑',
+        choices: [
+          {label:'笑着接受并暗自记录 (忍耐)', delta: 1},
+          {label:'告诉他这份工作应该按轮值 (争取公正)', delta:5},
+          {label:'当场反击，揭穿他的双重标准 (风险)', delta:-3}
+        ]
+      },
+      {
+        text: '港口检查时，官员质疑你是否能胜任轮机操作，语气略带轻蔑',
+        choices: [
+          {label:'出示证书并解释经验 (专业)', delta:6},
+          {label:'冷处理，等检查结束再谈 (回避)', delta:0},
+          {label:'当场质问他的偏见 (激化)', delta:-5}
+        ]
+      }
+    ];
+
+    const memoriesData = [
+      {title:'家人的信', img:src="2.png"},
+      {title:'母亲的围巾', img:src="3.png"},
+      {title:'儿时照片', img:src="5.png"},
+      {title:'港口小店的明信片', img:src="4.png"},
+    ];
+
+    // Quiz questions (all expected answer = '是' by default)
+    const quizQuestions = [
+      '你是否愿意继续支持女海员？',
+      '你认为女性在航海领域面临性别偏见吗？',
+      '你是否赞同加强对女性海员的保护？',
+      '你愿意倾听女海员的航海故事吗？',
+      '你认为家庭思念影响海员吗？'
+    ];
+
+    // ------------------ State ------------------
+    let resilience = 70; // 0-100
+    let currentScenario = 0;
+    let collected = [];
+
+    // quiz state
+    let quizStarted = false;
+    let quizIndex = 0;
+    let quizAnswers = [];
+    const perQuestionScore = Math.round(100 / quizQuestions.length);
+
+    // ------------------ Init ------------------
+    function init(){
+      renderScenario();
+      renderMemories();
+      updateResilienceBar();
+      document.getElementById('nextScenarioBtn').addEventListener('click', nextScenario);
+      document.getElementById('composeLetter').addEventListener('click', openComposeModal);
+      document.getElementById('autoLetter').addEventListener('click', autoGenerate);
+      document.getElementById('enableLeave').addEventListener('change', toggleGuestbookEnabled);
+      document.getElementById('openGuestbook').addEventListener('click', openGuestbookModal);
+      loadEntries();
+      window.addEventListener('scroll', handleParallax);
+      setInterval(()=>{shuffleMemories()}, 10000);
+
+      // quiz controls
+      document.getElementById('quizBtn').addEventListener('click', startQuiz);
+      document.getElementById('btnYes').addEventListener('click', ()=>submitAnswer('是'));
+      document.getElementById('btnNo').addEventListener('click', ()=>submitAnswer('否'));
+
+      // reset buttons
+      document.getElementById('resetBtn').addEventListener('click', ()=>location.reload());
+      addQuizResetButton();
+    }
+
+    // ------------------ Scenario ------------------
+    function renderScenario(){
+      const s = scenarios[currentScenario % scenarios.length];
+      document.getElementById('scenarioText').textContent = s.text;
+      const choicesEl = document.getElementById('choices'); choicesEl.innerHTML='';
+      s.choices.forEach((c,idx)=>{
+        const btn = document.createElement('button'); btn.className='btn'; btn.textContent=c.label;
+        btn.addEventListener('click', ()=>{applyChoice(c.delta)});
+        choicesEl.appendChild(btn);
+      });
+    }
+    function applyChoice(delta){
+      resilience = Math.max(0, Math.min(100, resilience + delta));
+      updateResilienceBar();
+      openModal(`<h3>你的回应已记录</h3><p>这次选择让你的心理坚韧值 ${delta>=0? '上升':'下降'} ${Math.abs(delta)} 点，现在为 ${resilience} / 100。</p>`);
+    }
+    function nextScenario(){
+      currentScenario++;
+      renderScenario();
+    }
+    function updateResilienceBar(){
+      document.getElementById('resilienceBar').style.width = resilience + '%';
+    }
+
+    // ------------------ Memories ------------------
+    function renderMemories(){
+      const el = document.getElementById('memories'); el.innerHTML='';
+      memoriesData.forEach((m,i)=>{
+        const d = document.createElement('div'); d.className='memory'; d.title=m.title;
+        const img = document.createElement('img'); img.src = m.img; img.alt=m.title;
+        d.appendChild(img);
+        d.addEventListener('click', ()=>{toggleCollect(i)});
+        if(collected.includes(i)) d.style.outline='3px solid rgba(255,122,162,0.18)';
+        el.appendChild(d);
+      });
+    }
+    function toggleCollect(i){
+      const idx = collected.indexOf(i);
+      if(idx===-1) collected.push(i); else collected.splice(idx,1);
+      renderMemories();
+      document.getElementById('letterPreview').textContent = collected.length ? `已收集 ${collected.length} 条记忆，可用于写信` : '尚未收集记忆';
+    }
+    function openComposeModal(){
+      const pieces = collected.map(i=>memoriesData[i].title).join('；') || '（无）';
+      const defaultText = `亲爱的家人：\n在海上我想起了：${pieces}。\n虽然有时感到孤独，但我仍在坚持。\n想你们。\n— 你远航的女儿`;
+      const content = `
+        <h3>写信给家人</h3>
+        <textarea id='letterArea' style='width:100%;height:160px;border-radius:8px;padding:8px;border:1px solid rgba(2,20,34,0.06)'>${defaultText}</textarea>
+        <div style='margin-top:8px;text-align:right'><button class='btn' id='saveLetter'>保存信件</button></div>`;
+      openModal(content);
+      setTimeout(()=>{document.getElementById('saveLetter').addEventListener('click', saveLetter)},50);
+    }
+    function saveLetter(){
+      const text = document.getElementById('letterArea').value;
+      const letters = JSON.parse(localStorage.getItem('sea_letters')||'[]');
+      letters.unshift({text, time: new Date().toLocaleString()});
+      localStorage.setItem('sea_letters', JSON.stringify(letters));
+      closeModal();
+      openModal('<h3>信件已保存（本地）</h3><p>它会出现在你的本地信箱里，可随时打开查看。</p>');
+    }
+    function autoGenerate(){
+      const tips = [
+        '今晚月色很淡，但我想你们的笑。',
+        '风把远方的声音带来，我听见家里的厨房。',
+        '每次航行都会让我更想念餐桌上的那碗汤。'
+      ];
+      const pick = tips[Math.floor(Math.random()*tips.length)];
+      document.getElementById('letterPreview').textContent = pick;
+    }
+
+    // ------------------ Guestbook ------------------
+    function toggleGuestbookEnabled(e){
+      document.getElementById('openGuestbook').disabled = !e.target.checked;
+    }
+    function openGuestbookModal(){
+      const content = `
+        <h3>留言板（自愿）</h3>
+        <div style='margin-bottom:8px'>你的署名（可选）：<input id='gbName' style='width:40%;padding:6px;border-radius:6px;border:1px solid rgba(2,20,34,0.06)' placeholder='匿名'></div>
+        <textarea id='gbText' style='width:100%;height:120px;border-radius:8px;padding:8px;border:1px solid rgba(2,20,34,0.06)' placeholder='写点鼓励或感受'></textarea>
+        <div style='margin-top:8px;text-align:right'><button class='btn' id='gbSubmit'>提交留言</button></div>
+      `;
+      openModal(content);
+      setTimeout(()=>{document.getElementById('gbSubmit').addEventListener('click', submitGuestbook)},50);
+    }
+    function submitGuestbook(){
+      const name = document.getElementById('gbName').value || '匿名';
+      const text = document.getElementById('gbText').value.trim();
+      if(!text){alert('请输入留言内容或关闭。');return}
+      const entries = JSON.parse(localStorage.getItem('sea_guestbook')||'[]');
+      entries.unshift({name,text,time:new Date().toLocaleString()});
+      localStorage.setItem('sea_guestbook', JSON.stringify(entries));
+      closeModal();
+      loadEntries();
+    }
+    function loadEntries(){
+      const el = document.getElementById('entries'); el.innerHTML='';
+      const entries = JSON.parse(localStorage.getItem('sea_guestbook')||'[]');
+      if(entries.length===0){el.innerHTML='<div style="padding:6px;color:#08313b">暂无留言，勾选“我选择留言”并点击"打开留言框"可发一条。</div>';return}
+      entries.forEach(en=>{
+        const d = document.createElement('div'); d.className='entry';
+        d.innerHTML = `<strong>${escapeHtml(en.name)}</strong> <span style='font-size:12px;color:#567'>${en.time}</span><div style='margin-top:6px'>${escapeHtml(en.text)}</div>`;
+        el.appendChild(d);
+      });
+    }
+
+    // ------------------ Quiz ------------------
+    function startQuiz(){
+      if(quizStarted) return;
+      quizStarted = true;
+      quizIndex = 0;
+      quizAnswers = [];
+      document.getElementById('quizBtn').textContent = '提交答案';
+      document.getElementById('btnYes').disabled = false;
+      document.getElementById('btnNo').disabled = false;
+      showQuizQuestion();
+    }
+    function showQuizQuestion(){
+      if(quizIndex >= quizQuestions.length){
+        finishQuiz();
+        return;
+      }
+      document.getElementById('quizQuestion').textContent = quizQuestions[quizIndex];
+      document.getElementById('quizProgress').textContent = `第 ${quizIndex+1} / ${quizQuestions.length} 题`;
+    }
+    function submitAnswer(ans){
+      if(!quizStarted) return;
+      quizAnswers.push(ans);
+      quizIndex++;
+      if(quizIndex < quizQuestions.length){
+        showQuizQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+    function finishQuiz(){
+      document.getElementById('btnYes').disabled = true;
+      document.getElementById('btnNo').disabled = true;
+      document.getElementById('quizBtn').disabled = true;
+      // scoring: expected answer = '是' for all questions (can be adjusted later)
+      let correctCount = quizAnswers.filter(a=>a==='是').length;
+      let score = correctCount * perQuestionScore;
+      // adjust rounding edge cases
+      if(score > 100) score = 100;
+      if(quizAnswers.length === 0) score = 0;
+      document.getElementById('quizResult').textContent = `你本次的互动得分为：${score} 分（${correctCount} / ${quizQuestions.length}）`;
+    }
+    function addQuizResetButton(){
+      const reset = document.createElement('button');
+      reset.textContent = '重新开始做题';
+      reset.style.position='fixed';
+      reset.style.bottom='70px';
+      reset.style.right='20px';
+      reset.style.padding='10px 20px';
+      reset.style.border='none';
+      reset.style.borderRadius='12px';
+      reset.style.background='#ffffffaa';
+      reset.style.backdropFilter='blur(6px)';
+      reset.style.cursor='pointer';
+      reset.style.fontSize='16px';
+      reset.id = 'quizResetBtn';
+      document.body.appendChild(reset);
+      reset.addEventListener('click', ()=>{
+        quizStarted = false; quizIndex = 0; quizAnswers = [];
+        document.getElementById('quizBtn').disabled = false; document.getElementById('quizBtn').textContent = '开始答题';
+        document.getElementById('quizResult').textContent = '';
+        document.getElementById('quizQuestion').textContent = '点击开始答题。';
+        document.getElementById('quizProgress').textContent = '';
+      });
+    }
+
+    // ------------------ Helpers & Modal ------------------
+    function openModal(html){
+      document.getElementById('modalContent').innerHTML = html;
+      document.getElementById('modal').style.display = 'flex';
+    }
+    function closeModal(){document.getElementById('modal').style.display = 'none'}
+    function escapeHtml(s){return (s||'').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')}
+
+    // ------------------ Parallax & visual helpers ------------------
+    function handleParallax(){
+      const rect = document.getElementById('parallax').getBoundingClientRect();
+      const layers = document.querySelectorAll('.parallax .layer');
+      layers.forEach(l=>{
+        const speed = parseFloat(l.getAttribute('data-speed')||0.5);
+        l.style.transform = `translateY(${rect.top * speed * -0.08}px)`;
+      });
+    }
+    function shuffleMemories(){
+      memoriesData.sort(()=>Math.random()-0.5);
+      renderMemories();
+    }
+
+    // ------------------ start ------------------
+    init();
+  </script>
+</body>
+</html>
